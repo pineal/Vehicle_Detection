@@ -395,7 +395,7 @@ def single_img_features(img, color_space='RGB', spatial_size=(32, 32),
 car_index = np.random.randint(0, len(cars))
 notcar_index = np.random.randint(0, len(notcars))
 car_image = cv2.imread(cars[car_index])
-notcar_image = cv2.imread(cars[notcar_index])
+notcar_image = cv2.imread(notcars[notcar_index])
 
 #Define Feature Parameters
 color_space = 'RGB'
@@ -438,8 +438,8 @@ orient = 9
 pix_per_cell = 8
 cell_per_block = 2
 hog_channel = 'ALL'
-spatial_size = (16, 16)
-hist_bins = 16
+spatial_size = (32, 32)
+hist_bins = 32
 spatial_feat = True
 hist_feat = True
 hog_feat = True
@@ -552,11 +552,18 @@ for img_src in test_images:
     cv2.imwrite(write_name, out_img)
     write_name = './output_images/heatmap' + str(img_index) + '.jpg'
     cv2.imwrite(write_name, heatmap)
+    heatmap = apply_threshold(heatmap,3)
+    heatmap = np.clip(heatmap, 0, 255)
+    draw_img = draw_labeled_bboxes(np.copy(img), labels)
+    write_name = './output_images/result' + str(img_index) + '.jpg'
+    cv2.imwrite(write_name, draw_img)
     img_index += 1
 
 
 def video_frame_processing(img):
     out_img, heatmap = find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
+    heatmap = apply_threshold(heatmap,1)
+    heatmap = np.clip(heatmap, 0, 255)
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(img), labels)
     return draw_img
