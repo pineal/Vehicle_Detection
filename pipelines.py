@@ -423,7 +423,6 @@ notcar_features, notcar_hog_image = single_img_features(notcar_image, color_spac
         hist_feat=hist_feat, hog_feat=hog_feat, vis=True)
 
 images = [car_image, car_hog_image, notcar_image, notcar_hog_image]
-print(len(images))
 for i in range(len(images)):
     # read in image
     write_name = './output_images/samples' + str(i) + '.jpg'
@@ -513,7 +512,7 @@ for img_src in test_images:
     draw_image = np.copy(image)
 
     windows = slide_window(image, x_start_stop=[None, None], y_start_stop=y_start_stop, 
-                    xy_window=(128, 128), xy_overlap=(overlap, overlap))
+                    xy_window=(96, 96), xy_overlap=(overlap, overlap))
 
     hot_windows = search_windows(image, windows, svc, X_scaler, color_space=color_space, 
                         spatial_size=spatial_size, hist_bins=hist_bins, 
