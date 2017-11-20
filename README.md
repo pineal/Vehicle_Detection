@@ -127,8 +127,25 @@ Pictures in the output folder with windows*.jpg are the result of applying slidi
 ### Video Implementation
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](./project_video_output.mp4)
+- I did data augmention with keras framework(code in data_aug.py). From the raw data, I randomly augmented the image twice with following parameters:
+```
+datagen = ImageDataGenerator(
+        featurewise_center=True,
+        featurewise_std_normalization=True,
+        rotation_range=5,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True,
+        zca_whitening=True,
+        channel_shift_range=10,
+        fill_mode='nearest')
+```
 
+- I added a cache to store previous label in case 
+the label is failed to pass sannity check, which will leads to a frame without label, and using the average of previous heatmaps to smooth.
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
@@ -151,4 +168,4 @@ I applied a threshold to the heatmaps to filter out the false positives, I have 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 **Even after thresholding heatmaps**, there are still having some false positive. What I can improve most is try to cache the detection box result, and use rolling average to try smoothing. (Done)
-Need to tune the parameters better. 
+Need to tune the parameters better. Or to collect more datas?
