@@ -401,8 +401,8 @@ orient = 9
 pix_per_cell = 8
 cell_per_block = 2
 hog_channel = 0
-spatial_size = (16, 16)
-hist_bins = 16
+spatial_size = (32, 32)
+hist_bins = 32
 spatial_feat = True
 hist_feat = True
 hog_feat = True
@@ -435,8 +435,8 @@ orient = 9
 pix_per_cell = 8
 cell_per_block = 2
 hog_channel = 'ALL'
-spatial_size = (16, 16)
-hist_bins = 16
+spatial_size = (32, 32)
+hist_bins = 32
 spatial_feat = True
 hist_feat = True
 hog_feat = True
@@ -553,12 +553,13 @@ for img_src in test_images:
     cv2.imwrite(write_name, draw_img)
     img_index += 1
 
+
 heatmaps = []
 prev_labels = []
 
 def video_frame_processing(img):
     out_img, heatmap = find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
-    heatmap = apply_threshold(heatmap, 3)
+    heatmap = apply_threshold(heatmap, 5)
     labels = label(heatmap)
     heatmaps.append(heatmap)
     total_heatmap = sum(heatmaps)
@@ -568,7 +569,7 @@ def video_frame_processing(img):
     if labels:
         prev_labels = labels
     else:
-        labels = prev_labeks
+        labels = prev_labels
 
     draw_img = draw_labeled_bboxes(np.copy(img), labels)
     return draw_img
