@@ -545,7 +545,7 @@ for img_src in test_images:
     cv2.imwrite(write_name, out_img)
     write_name = './output_images/heatmap' + str(img_index) + '.jpg'
     cv2.imwrite(write_name, heatmap)
-    heatmap = apply_threshold(heatmap,3)
+    heatmap = apply_threshold(heatmap, 3)
     heatmap = np.clip(heatmap, 0, 255)
     draw_img = draw_labeled_bboxes(np.copy(img), labels)
     write_name = './output_images/result' + str(img_index) + '.jpg'
@@ -555,7 +555,7 @@ for img_src in test_images:
 
 def video_frame_processing(img):
     out_img, heatmap = find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
-    heatmap = apply_threshold(heatmap,1)
+    heatmap = apply_threshold(heatmap, 3)
     heatmap = np.clip(heatmap, 0, 255)
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(img), labels)
