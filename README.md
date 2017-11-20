@@ -150,4 +150,5 @@ I applied a threshold to the heatmaps to filter out the false positives, I have 
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-There are still having some false positive. What I can improve most is try to cache the detection box result, and use rolling average to try smoothing. 
+**Even after thresholding heatmaps**, there are still having some false positive. What I can improve most is try to cache the detection box result, and use rolling average to try smoothing. (Done)
+Need to tune the parameters better. 
