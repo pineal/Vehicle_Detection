@@ -14,7 +14,7 @@ from utils import *
 from param import *
 
 # Load vehicle images
-basedir = 'vehicles/'
+basedir = 'data/cars/'
 image_types = os.listdir(basedir)
 cars = []
 
@@ -27,7 +27,7 @@ with open("car.txt", 'w') as f:
         f.write(fn + '\n')
 
 
-basedir = 'non-vehicles/'
+basedir = 'data/notcars/'
 image_types = os.listdir(basedir)
 notcars = []
 
@@ -39,24 +39,17 @@ with open("nocar.txt", 'w') as f:
     for fn in notcars:
         f.write(fn + '\n')
 
-car_index = np.random.randint(0, len(cars))
-notcar_index = np.random.randint(0, len(notcars))
-car_image = cv2.imread(cars[car_index])
-notcar_image = cv2.imread(notcars[notcar_index])
-
 t=time.time()
-n_samples = 500
-random_index = np.random.randint(0, len(cars), n_samples)
-test_cars = cars
-test_notcars = notcars
 
-car_features = extract_features(test_cars, color_space=color_space, 
+print(time.time()-t, 'Start to compute features...')
+
+car_features = extract_features(cars, color_space=color_space, 
                         spatial_size=spatial_size, hist_bins=hist_bins, 
                         orient=orient, pix_per_cell=pix_per_cell, 
                         cell_per_block=cell_per_block, 
                         hog_channel=hog_channel, spatial_feat=spatial_feat, 
                         hist_feat=hist_feat, hog_feat=hog_feat)
-notcar_features = extract_features(test_notcars, color_space=color_space, 
+notcar_features = extract_features(notcars, color_space=color_space, 
                         spatial_size=spatial_size, hist_bins=hist_bins, 
                         orient=orient, pix_per_cell=pix_per_cell, 
                         cell_per_block=cell_per_block, 
@@ -82,11 +75,19 @@ X_train, X_test, y_train, y_test = train_test_split(
 print('Using:',orient,'orientations',pix_per_cell,
     'pixels per cell and', cell_per_block,'cells per block')
 print('Feature vector length:', len(X_train[0]))
+
 # Use a linear SVC
-svc = LinearSVC(C=1.2, class_weight=None, dual=True, fit_intercept=True,
-     intercept_scaling=1, loss='squared_hinge', max_iter=1000,
-     multi_class='ovr', penalty='l2', random_state=None, tol=0.0001,
-     verbose=0)
+svc = LinearSVC(C=1.5, 
+                class_weight=None, 
+                dual=True, 
+                fit_intercept=True,
+                intercept_scaling=1, 
+                loss='squared_hinge', 
+                multi_class='ovr', 
+                penalty='l2', 
+                random_state=rand_state, 
+                tol=0.0001,
+                verbose=2)
 # Check the training time for the SVC
 t=time.time()
 svc.fit(X_train, y_train)
@@ -105,30 +106,3 @@ joblib.dump(svc, 'classifier.pkl')
 print('Classifier Saved!')
 joblib.dump(X_scaler, 'scaler.pkl')
 print('Scaler Saved!')
-
-'''
-test
-'''
-
-x_start_stop = [400, None] # Min and max in y to search in slide_window()
-y_start_stop = [380, None] # Min and max in y to search in slide_window()
-image = cv2.imread('test_images/test1.jpg')
-draw_image = np.copy(image)
-
-# Uncomment the following line if you extracted training
-# data from .png images (scaled 0 to 1 by mpimg) and the
-# image you are searching is a .jpg (scaled 0 to 255)
-image = image.astype(np.float32)/255
-
-windows = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, xy_window=(92, 92), xy_overlap=(0.7, 0.7))
-
-hot_windows = search_windows(image, windows, svc, X_scaler, color_space=color_space,
-                        spatial_size=spatial_size, hist_bins=hist_bins,
-                        orient=orient, pix_per_cell=pix_per_cell,
-                        cell_per_block=cell_per_block,
-                        hog_channel=hog_channel, spatial_feat=spatial_feat,
-                        hist_feat=hist_feat, hog_feat=hog_feat)
-
-window_img = draw_boxes(draw_image, hot_windows, color=(0, 0, 255), thick=6)
-write_name = './output_images/aaa' + '.jpg'
-cv2.imwrite(write_name, window_img)

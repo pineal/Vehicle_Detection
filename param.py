@@ -13,7 +13,9 @@ hog_feat = True
 overlap = 0.5
 ystart = 400
 ystop = 656
-scale = 0.9
-window_size = 92
+scale = 1.5
+window_size = 96
 x_start_stop = [400, None] # Min and max in y to search in slide_window()
 y_start_stop = [380, None] # Min and max in y to search in slide_window()
+
+heat_threshold = 1

@@ -435,8 +435,8 @@ orient = 9
 pix_per_cell = 8
 cell_per_block = 2
 hog_channel = 'ALL'
-spatial_size = (32, 32)
-hist_bins = 32
+spatial_size = (16, 16)
+hist_bins = 16
 spatial_feat = True
 hist_feat = True
 hog_feat = True
@@ -510,6 +510,7 @@ for img_src in test_images:
     t1 = time.time()
     image = cv2.imread(img_src)
     draw_image = np.copy(image)
+    image = image.astype(np.float32)/255
 
     windows = slide_window(image, x_start_stop=[None, None], y_start_stop=y_start_stop, 
                     xy_window=(96, 96), xy_overlap=(overlap, overlap))
@@ -545,19 +546,30 @@ for img_src in test_images:
     cv2.imwrite(write_name, out_img)
     write_name = './output_images/heatmap' + str(img_index) + '.jpg'
     cv2.imwrite(write_name, heatmap)
-    heatmap = apply_threshold(heatmap, 3)
+    heatmap = apply_threshold(heatmap,3)
     heatmap = np.clip(heatmap, 0, 255)
     draw_img = draw_labeled_bboxes(np.copy(img), labels)
     write_name = './output_images/result' + str(img_index) + '.jpg'
     cv2.imwrite(write_name, draw_img)
     img_index += 1
 
+heatmaps = []
+prev_labels = []
 
 def video_frame_processing(img):
     out_img, heatmap = find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
     heatmap = apply_threshold(heatmap, 3)
-    heatmap = np.clip(heatmap, 0, 255)
     labels = label(heatmap)
+    heatmaps.append(heatmap)
+    total_heatmap = sum(heatmaps)
+    heatmap = np.clip(heatmap, 0, 255)
+    labels = label(total_heatmap)
+    
+    if labels:
+        prev_labels = labels
+    else:
+        labels = prev_labeks
+
     draw_img = draw_labeled_bboxes(np.copy(img), labels)
     return draw_img
 
